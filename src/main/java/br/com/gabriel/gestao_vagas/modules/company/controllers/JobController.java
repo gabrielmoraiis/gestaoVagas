@@ -2,13 +2,11 @@ package br.com.gabriel.gestao_vagas.modules.company.controllers;
 
 import java.util.UUID;
 
+import br.com.gabriel.gestao_vagas.modules.company.useCases.ListAllJobsByCompanyUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import br.com.gabriel.gestao_vagas.modules.company.dto.CreateJobDTO;
 import br.com.gabriel.gestao_vagas.modules.company.entities.JobEntity;
@@ -29,6 +27,9 @@ public class JobController {
 
   @Autowired
   private CreateJobUseCase createJobUseCase;
+
+  @Autowired
+  private ListAllJobsByCompanyUseCase listAllJobsByCompanyUseCase;
 
   @PostMapping("/")
   @PreAuthorize("hasRole('COMPANY')")
@@ -60,5 +61,23 @@ public class JobController {
       }
 
 
+  }
+    @GetMapping("/")
+    @PreAuthorize("hasRole('COMPANY')")
+    @Tag(name = "Vagas", description = "Listagem das vagas")
+    @Operation(summary = "Listagem de vagas",
+            description = "Essa função é responsável por listar as vagas da empresa")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200", content = {
+                    @Content(schema = @Schema(implementation = JobEntity.class))
+            }
+            )
+    })
+    @SecurityRequirement(name = "jwt_auth")
+  public ResponseEntity<Object> listByCompany(HttpServletRequest request){
+      var companyId = request.getAttribute("company_id");
+      var result = this.listAllJobsByCompanyUseCase.execute(UUID.fromString(companyId.toString()));
+      return ResponseEntity.ok().body(result);
   }
 }

@@ -44,21 +44,22 @@ public class AuthCandidateUseCase {
             throw new AuthenticationException();
         }
 
-        Algorithm algorithm = Algorithm.HMAC256(securityKey);
+        var roles = Arrays.asList("CANDIDATE");
 
+        Algorithm algorithm = Algorithm.HMAC256(securityKey);
         var expriresIn = Instant.now().plus(Duration.ofMinutes(10));
         var token = JWT.create()
         .withIssuer("javagas")
         .withSubject(candidate.getId().toString())
-        .withClaim("roles", Arrays.asList("CANDIDATE"))
+        .withClaim("roles", roles)
         .withExpiresAt(expriresIn)
         .sign(algorithm);
 
         var authCandidateResponse = AuthCandidateResponseDTO.builder()
         .access_token(token)
-        .exprires_in(expriresIn.toEpochMilli())
+        .expires_in(expriresIn.toEpochMilli())
+                .roles(roles)
         .build();
-
         return authCandidateResponse;
     }
     

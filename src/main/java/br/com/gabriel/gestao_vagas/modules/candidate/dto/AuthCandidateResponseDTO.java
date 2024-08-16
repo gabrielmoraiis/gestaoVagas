@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -13,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class AuthCandidateResponseDTO {
     
     private String access_token;
-    private Long exprires_in;
+    private Long expires_in;
+    private List<String> roles;
 
 }

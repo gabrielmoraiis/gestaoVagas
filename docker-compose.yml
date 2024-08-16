@@ -7,7 +7,6 @@ volumes:
   prometheus_data:
   grafana_data:
 
-
 services:
   postgres:
     container_name: gestao_vagas_postgres
